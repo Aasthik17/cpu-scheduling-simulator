@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CPU Scheduling Simulator</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <h1>🖥️ CPU Scheduling Simulator</h1>
+  <p class="subtitle">FCFS • SJF • Round Robin</p>
+
+  <div class="controls">
+    <select id="algorithm">
+      <option value="fcfs">First Come First Serve (FCFS)</option>
+      <option value="sjf">Shortest Job First (SJF)</option>
+      <option value="rr">Round Robin</option>
+    </select>
+
+    <input type="number" id="quantum" placeholder="Time Quantum (RR only)" />
+
+    <button onclick="addProcess()">➕ Add Process</button>
+    <button onclick="runSimulation()">▶ Run Simulation</button>
+    <button onclick="resetAll()">♻ Reset</button>
+  </div>
+
+  <h2>Process List</h2>
+  <table id="processTable">
+    <thead>
+      <tr>
+        <th>PID</th>
+        <th>Arrival Time</th>
+        <th>Burst Time</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Results</h2>
+  <div id="results"></div>
+
+  <h2>Gantt Chart</h2>
+  <canvas id="ganttChart"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
