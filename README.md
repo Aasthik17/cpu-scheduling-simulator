@@ -36,6 +36,3 @@ Deployed using GitHub Pages.
 - Performance metrics
 - Frontend visualization
 - System design concepts
-
-## 📌 Author
-Built for learning and interviews.
