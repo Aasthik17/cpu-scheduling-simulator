@@ -49,3 +49,18 @@ th {
   font-weight: bold;
   margin-bottom: 20px;
 }
+
+#gantt {
+  display: flex;
+  border: 1px solid #333;
+  margin-top: 10px;
+}
+
+.block {
+  border-right: 1px solid #fff;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

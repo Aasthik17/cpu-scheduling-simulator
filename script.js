@@ -73,39 +73,79 @@ function fcfs(procList) {
 
 function sjf(procList) {
   let time = 0;
+  let completed = [];
   let gantt = [];
 
-  procList.sort((a, b) => a.burst - b.burst);
+  procList = procList.map(p => ({ ...p }));
 
-  procList.forEach(p => {
+  while (completed.length < procList.length) {
+    let available = procList.filter(
+      p => p.arrival <= time && !completed.includes(p)
+    );
+
+    if (available.length === 0) {
+      time++;
+      continue;
+    }
+
+    let shortest = available.reduce((a, b) =>
+      a.burst < b.burst ? a : b
+    );
+
     let start = time;
-    time += p.burst;
-    p.completion = time;
-    gantt.push({ pid: p.pid, start, end: time });
-  });
+    time += shortest.burst;
+    shortest.completion = time;
+
+    completed.push(shortest);
+    gantt.push({ pid: shortest.pid, start, end: time });
+  }
 
   return gantt;
 }
 
+
 function roundRobin(procList, quantum) {
   let time = 0;
   let gantt = [];
-  let queue = [...procList];
 
-  while (queue.length > 0) {
-    let p = queue.shift();
+  procList = procList.map(p => ({
+    ...p,
+    remaining: p.burst
+  }));
 
-    if (p.remaining > quantum) {
-      gantt.push({ pid: p.pid, start: time, end: time + quantum });
-      time += quantum;
-      p.remaining -= quantum;
-      queue.push(p);
-    } else {
-      gantt.push({ pid: p.pid, start: time, end: time + p.remaining });
-      time += p.remaining;
-      p.remaining = 0;
-      p.completion = time;
+  let queue = [];
+  let arrived = [...procList];
+
+  while (queue.length || arrived.length) {
+    arrived
+      .filter(p => p.arrival <= time)
+      .forEach(p => {
+        queue.push(p);
+        arrived = arrived.filter(x => x !== p);
+      });
+
+    if (queue.length === 0) {
+      time++;
+      continue;
     }
+
+    let p = queue.shift();
+    let exec = Math.min(quantum, p.remaining);
+
+    gantt.push({ pid: p.pid, start: time, end: time + exec });
+
+    time += exec;
+    p.remaining -= exec;
+
+    arrived
+      .filter(p => p.arrival <= time)
+      .forEach(p => {
+        queue.push(p);
+        arrived = arrived.filter(x => x !== p);
+      });
+
+    if (p.remaining > 0) queue.push(p);
+    else p.completion = time;
   }
 
   return gantt;
@@ -151,39 +191,45 @@ function showMetrics(procList) {
   procList.forEach(p => {
     let tat = p.completion - p.arrival;
     let wt = tat - p.burst;
+
     totalWT += wt;
     totalTAT += tat;
   });
 
-  let avgWT = (totalWT / procList.length).toFixed(2);
-  let avgTAT = (totalTAT / procList.length).toFixed(2);
-
-  document.getElementById("results").innerHTML =
-    `Average Waiting Time: ${avgWT}<br>
-     Average Turnaround Time: ${avgTAT}`;
+  document.getElementById("results").innerHTML = `
+    <strong>Average Waiting Time:</strong> ${(totalWT / procList.length).toFixed(2)}<br>
+    <strong>Average Turnaround Time:</strong> ${(totalTAT / procList.length).toFixed(2)}
+  `;
 }
+
 
 // ---------- GANTT CHART ----------
 
 function drawGantt(gantt) {
-  const ctx = document.getElementById("ganttChart");
+  const container = document.getElementById("gantt");
+  container.innerHTML = "";
 
-  if (chart) chart.destroy();
+  const totalTime = gantt[gantt.length - 1].end;
 
-  chart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: gantt.map(g => g.pid),
-      datasets: [{
-        data: gantt.map(g => g.end - g.start),
-        backgroundColor: "#4f81bd"
-      }]
-    },
-    options: {
-      indexAxis: "y",
-      scales: {
-        x: { beginAtZero: true }
-      }
-    }
+  gantt.forEach(g => {
+    const width = ((g.end - g.start) / totalTime) * 100;
+
+    const block = document.createElement("div");
+    block.className = "block";
+    block.style.width = width + "%";
+    block.style.background = colorForPID(g.pid);
+    block.innerText = `${g.pid} (${g.start}-${g.end})`;
+
+    container.appendChild(block);
   });
+}
+
+function colorForPID(pid) {
+  const colors = {
+    P1: "#4f81bd",
+    P2: "#c0504d",
+    P3: "#9bbb59",
+    P4: "#8064a2"
+  };
+  return colors[pid] || "#555";
 }
