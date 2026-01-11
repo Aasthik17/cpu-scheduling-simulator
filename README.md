@@ -3,6 +3,8 @@
 An interactive web-based CPU Scheduling Simulator that demonstrates classic
 operating system scheduling algorithms.
 
+Checkout: https://aasthik17.github.io/cpu-scheduling-simulator/
+
 ## 🚀 Algorithms Implemented
 - First Come First Serve (FCFS)
 - Shortest Job First (Non-Preemptive)
