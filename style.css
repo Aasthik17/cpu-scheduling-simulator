@@ -1,66 +1,156 @@
+/* ==============================
+   THEME VARIABLES
+============================== */
+
+:root {
+  --bg: #f4f6f8;
+  --text: #111;
+  --card: #ffffff;
+  --border: #d0d0d0;
+  --accent: #4f81bd;
+}
+
+body.dark {
+  --bg: #121212;
+  --text: #f5f5f5;
+  --card: #1e1e1e;
+  --border: #333;
+  --accent: #7aa2ff;
+}
+
+/* ==============================
+   GLOBAL STYLES
+============================== */
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
+  margin: 0;
   padding: 20px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1 {
   text-align: center;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
 .subtitle {
   text-align: center;
-  color: #555;
+  color: #777;
   margin-bottom: 20px;
 }
+
+/* ==============================
+   CONTROLS
+============================== */
 
 .controls {
-  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
   margin-bottom: 20px;
 }
 
-select, input, button {
-  padding: 8px;
-  margin: 5px;
+button,
+select,
+input {
+  padding: 8px 12px;
+  font-size: 14px;
+  background-color: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease, border 0.2s ease;
 }
 
-button {
-  cursor: pointer;
+button:hover {
+  background-color: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
 }
+
+/* ==============================
+   TABLE
+============================== */
 
 table {
   width: 100%;
   border-collapse: collapse;
+  background-color: var(--card);
   margin-bottom: 20px;
 }
 
-th, td {
-  border: 1px solid #ccc;
+th,
+td {
+  border: 1px solid var(--border);
   padding: 8px;
   text-align: center;
 }
 
 th {
-  background: #eaeaea;
+  background-color: rgba(0, 0, 0, 0.06);
 }
 
+/* ==============================
+   RESULTS
+============================== */
+
 #results {
-  font-weight: bold;
+  font-size: 16px;
   margin-bottom: 20px;
 }
 
+/* ==============================
+   GANTT CHART
+============================== */
+
 #gantt {
   display: flex;
-  border: 1px solid #333;
-  margin-top: 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  min-height: 50px;
+  background-color: var(--card);
 }
 
 .block {
-  border-right: 1px solid #fff;
-  color: white;
-  font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 600;
+  color: white;
+  font-size: 13px;
+  white-space: nowrap;
+  animation: grow 0.4s ease-in-out;
+}
+
+/* Animation for step-by-step rendering */
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* ==============================
+   RESPONSIVE
+============================== */
+
+@media (max-width: 600px) {
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }

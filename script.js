@@ -179,7 +179,7 @@ function runSimulation() {
   }
 
   showMetrics(procCopy);
-  drawGantt(gantt);
+  drawGanttAnimated(gantt);
 }
 
 // ---------- METRICS ----------
@@ -205,13 +205,17 @@ function showMetrics(procList) {
 
 // ---------- GANTT CHART ----------
 
-function drawGantt(gantt) {
+function drawGanttAnimated(gantt) {
   const container = document.getElementById("gantt");
   container.innerHTML = "";
 
   const totalTime = gantt[gantt.length - 1].end;
+  let index = 0;
 
-  gantt.forEach(g => {
+  function renderNext() {
+    if (index >= gantt.length) return;
+
+    const g = gantt[index];
     const width = ((g.end - g.start) / totalTime) * 100;
 
     const block = document.createElement("div");
@@ -221,7 +225,12 @@ function drawGantt(gantt) {
     block.innerText = `${g.pid} (${g.start}-${g.end})`;
 
     container.appendChild(block);
-  });
+    index++;
+
+    setTimeout(renderNext, 600); // ⏱ animation speed
+  }
+
+  renderNext();
 }
 
 function colorForPID(pid) {
@@ -233,3 +242,33 @@ function colorForPID(pid) {
   };
   return colors[pid] || "#555";
 }
+
+
+function toggleTheme() {
+  const body = document.body;
+  body.classList.toggle("dark");
+
+  const theme = body.classList.contains("dark") ? "dark" : "light";
+  localStorage.setItem("theme", theme);
+}
+
+(function initTheme() {
+  const savedTheme = localStorage.getItem("theme");
+
+  if (savedTheme) {
+    // User preference exists → use it
+    document.body.classList.toggle("dark", savedTheme === "dark");
+  } else {
+    // No user preference → follow system theme
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    document.body.classList.toggle("dark", prefersDark);
+  }
+})();
+
+const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+mediaQuery.addEventListener("change", e => {
+  if (!localStorage.getItem("theme")) {
+    document.body.classList.toggle("dark", e.matches);
+  }
+});
